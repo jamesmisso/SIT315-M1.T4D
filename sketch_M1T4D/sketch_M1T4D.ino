@@ -5,6 +5,8 @@ volatile byte ledState = 0;
 
 void setup()
 {
+  Serial.begin(9600);
+  Serial.println("System Initialized...");
   pinMode (2, OUTPUT);
     pinMode (3, OUTPUT);
     pinMode (4, OUTPUT);
@@ -25,7 +27,7 @@ void setup()
   //CS12 - bit 2 in the TCCR1B register- used for setting the timer prescaler
   //CS10 - bit 0 in the register- used to configure Timer1 prescaler
   
-  OCR1A = 1*16000000/1024 - 1; //i have set the timer to 2 seconds just to be different
+  OCR1A = 1*16000000/1024 - 1;//i havnds just to be different
   
   TIMSK1 = 0b00000010;  // Enable Timer1 output compare A match interrupt
     
@@ -51,7 +53,12 @@ ISR(PCINT1_vect) {
   b = PINC & B00000010; // Read the state of pin A1 and store it in 'b'
  r = (PINC & B00001100) ? HIGH : LOW;  // Read the state of pin A2, A3 and store it in 'r'
   updateLED();  // Update the LED with the new color values
-  
+  Serial.print("Pin change interrupt: r=");
+  Serial.print(r);
+  Serial.print(", g=");
+  Serial.print(g);
+  Serial.print(", b=");
+  Serial.println(b);
 }
 
 
@@ -63,5 +70,6 @@ ISR(PCINT1_vect) {
   g = (ledState == 1);
   b = (ledState == 2);
 
+ Serial.println("Timer interrupt: cycling LED color");
   updateLED();
 }

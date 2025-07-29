@@ -1,10 +1,12 @@
 volatile byte r, g, b = 0;
 volatile bool br, bg, bb = false;
-
+volatile bool ledEnabled = true;
 volatile byte ledState = 0;
 
 void setup()
 {
+  Serial.begin(9600);
+  Serial.println("System Initialized...");
   pinMode (2, OUTPUT);
     pinMode (3, OUTPUT);
     pinMode (4, OUTPUT);
@@ -51,7 +53,12 @@ ISR(PCINT1_vect) {
   b = PINC & B00000010; // Read the state of pin A1 and store it in 'b'
  r = (PINC & B00001100) ? HIGH : LOW;  // Read the state of pin A2, A3 and store it in 'r'
   updateLED();  // Update the LED with the new color values
-  
+  Serial.print("Pin change interrupt: r=");
+  Serial.print(r);
+  Serial.print(", g=");
+  Serial.print(g);
+  Serial.print(", b=");
+  Serial.println(b);
 }
 
 
@@ -63,5 +70,6 @@ ISR(PCINT1_vect) {
   g = (ledState == 1);
   b = (ledState == 2);
 
+ Serial.println("Timer interrupt: cycling LED color");
   updateLED();
 }
